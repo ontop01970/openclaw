@@ -5,6 +5,13 @@ import { type RetryConfig, resolveRetryConfig, retryAsync } from "./retry.js";
 
 export type RetryRunner = <T>(fn: () => Promise<T>, label?: string) => Promise<T>;
 
+export const GEMINI_RETRY_DEFAULTS = {
+  attempts: 4,
+  minDelayMs: 1000,
+  maxDelayMs: 90_000,
+  jitter: 0.15,
+};
+
 export const DISCORD_RETRY_DEFAULTS = {
   attempts: 3,
   minDelayMs: 500,
@@ -65,6 +72,75 @@ export function createDiscordRetryRunner(params: {
             const maxRetries = Math.max(1, info.maxAttempts - 1);
             log.warn(
               `discord ${labelText} rate limited, retry ${info.attempt}/${maxRetries} in ${info.delayMs}ms`,
+            );
+          }
+        : undefined,
+    });
+}
+
+const GEMINI_RETRY_RE = /429|resource.exhausted|quota|rate.limit|too many requests|overloaded/i;
+
+/**
+ * Parse retry delay from Gemini error responses.
+ * Gemini returns `retryDelay` in the error details, e.g. "47s" or "1m30s".
+ */
+function getGeminiRetryAfterMs(err: unknown): number | undefined {
+  if (!err || typeof err !== "object") {
+    return undefined;
+  }
+  const message = formatErrorMessage(err);
+  // Match "retry in Xs" or "retryDelay": "Xs" patterns
+  const retryInMatch = message.match(/retry in ([\d.]+)s/i);
+  if (retryInMatch?.[1]) {
+    const seconds = Number.parseFloat(retryInMatch[1]);
+    if (Number.isFinite(seconds) && seconds > 0) {
+      return Math.ceil(seconds * 1000);
+    }
+  }
+  // Check for retryDelay in nested error structure
+  const details = (err as { error?: { details?: unknown[] } }).error?.details;
+  if (Array.isArray(details)) {
+    for (const detail of details) {
+      if (detail && typeof detail === "object" && "retryDelay" in detail) {
+        const delay = (detail as { retryDelay?: string }).retryDelay;
+        if (typeof delay === "string") {
+          const match = delay.match(/(\d+)s/);
+          if (match?.[1]) {
+            return Number.parseInt(match[1], 10) * 1000;
+          }
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
+export function isGeminiRetryableError(err: unknown): boolean {
+  const message = formatErrorMessage(err);
+  return GEMINI_RETRY_RE.test(message);
+}
+
+export function createGeminiRetryRunner(params: {
+  retry?: RetryConfig;
+  configRetry?: RetryConfig;
+  verbose?: boolean;
+}): RetryRunner {
+  const retryConfig = resolveRetryConfig(GEMINI_RETRY_DEFAULTS, {
+    ...params.configRetry,
+    ...params.retry,
+  });
+  return <T>(fn: () => Promise<T>, label?: string) =>
+    retryAsync(fn, {
+      ...retryConfig,
+      label,
+      shouldRetry: isGeminiRetryableError,
+      retryAfterMs: getGeminiRetryAfterMs,
+      onRetry: params.verbose
+        ? (info) => {
+            const labelText = info.label ?? "request";
+            const maxRetries = Math.max(1, info.maxAttempts - 1);
+            console.warn(
+              `gemini ${labelText} rate limited, retry ${info.attempt}/${maxRetries} in ${info.delayMs}ms`,
             );
           }
         : undefined,
