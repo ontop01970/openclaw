@@ -19,10 +19,12 @@ warp-cli open
 ```
 
 **Options:**
+
 - `--cwd <directory>` - Open in specified directory
 - `--new-tab` - Open in a new tab instead of window
 
 **Examples:**
+
 ```bash
 # Open in current directory
 warp-cli open
@@ -43,6 +45,7 @@ warp-cli run "<command>"
 ```
 
 **Examples:**
+
 ```bash
 # Single command
 warp-cli run "git status"
@@ -72,6 +75,7 @@ warp-cli list
 ### With OpenClaw
 
 OpenClaw can use `warp-cli` to:
+
 - Open terminals for user review of commands
 - Execute commands that benefit from Warp's AI features
 - Create workflows for repeated command sequences
@@ -90,6 +94,7 @@ warp-cli run "npm test"
 ### warp-cli not found
 
 Ensure Warp is installed and the CLI is in your PATH:
+
 ```bash
 which warp-cli
 ```
@@ -99,6 +104,7 @@ If not found, add Warp's bin directory to PATH or reinstall Warp.
 ### Commands not executing
 
 Check that commands are properly quoted:
+
 ```bash
 # Correct
 warp-cli run "echo 'hello world'"

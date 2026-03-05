@@ -25,6 +25,7 @@ Warp Workflows are reusable command sequences that can be saved and shared. They
 Workflows are stored as YAML files in `~/.warp/workflows/`
 
 Example workflow:
+
 ```yaml
 name: "Deploy to Production"
 description: "Build and deploy the app"
@@ -46,6 +47,7 @@ commands:
 ### Parameterization
 
 Use environment variables for flexibility:
+
 ```yaml
 name: "Git Branch Deploy"
 commands:
@@ -57,6 +59,7 @@ commands:
 ### Documentation
 
 Add clear descriptions:
+
 ```yaml
 name: "Database Migration"
 description: "Run database migrations and seed data. Use on staging before production."
@@ -68,6 +71,7 @@ commands:
 ### Error Handling
 
 Include validation steps:
+
 ```yaml
 name: "Safe Deploy"
 commands:
@@ -91,6 +95,7 @@ Place workflow YAML files in `~/.warp/workflows/` and restart Warp
 ## Common Workflow Patterns
 
 ### Development Server Start
+
 ```yaml
 name: "Start Dev Environment"
 commands:
@@ -100,6 +105,7 @@ commands:
 ```
 
 ### Git Workflow
+
 ```yaml
 name: "Git PR Workflow"
 commands:
@@ -111,6 +117,7 @@ commands:
 ```
 
 ### Testing
+
 ```yaml
 name: "Full Test Suite"
 commands:
@@ -123,14 +130,16 @@ commands:
 ## Integration with OpenClaw
 
 OpenClaw can:
+
 - Suggest creating workflows for repeated command patterns
 - Help users find appropriate workflows for tasks
 - Generate workflow YAML files programmatically
 - Execute workflows via Warp CLI
 
 Example OpenClaw interaction:
+
 ```
 User: "I need to deploy the app"
-OpenClaw: "I see you have a 'Deploy to Production' workflow saved. 
+OpenClaw: "I see you have a 'Deploy to Production' workflow saved.
           Would you like me to run it, or create a new deployment workflow?"
 ```

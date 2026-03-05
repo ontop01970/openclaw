@@ -12,11 +12,13 @@ This skill enables interaction with Warp, a modern terminal with AI-powered feat
 ## Quick Start
 
 Open Warp terminal:
+
 ```bash
 warp-cli open
 ```
 
 Run a command in a new Warp window:
+
 ```bash
 warp-cli run "ls -la"
 ```
@@ -26,11 +28,13 @@ warp-cli run "ls -la"
 ### 1. Opening Terminal Windows
 
 Open a new Warp window:
+
 ```bash
 warp-cli open
 ```
 
 Open in a specific directory:
+
 ```bash
 warp-cli open --cwd /path/to/directory
 ```
@@ -38,11 +42,13 @@ warp-cli open --cwd /path/to/directory
 ### 2. Command Execution
 
 Execute a single command:
+
 ```bash
 warp-cli run "git status"
 ```
 
 Execute multiple commands:
+
 ```bash
 warp-cli run "cd /home/user && ls -la && git status"
 ```
@@ -50,6 +56,7 @@ warp-cli run "cd /home/user && ls -la && git status"
 ### 3. Workflow Management
 
 Warp workflows are saved command sequences. Access them via:
+
 - `Ctrl+Shift+R` (default keybinding)
 - Or through the Warp UI
 
@@ -58,6 +65,7 @@ Create a workflow by saving commonly used command sequences in Warp's workflow U
 ### 4. AI Command Search
 
 Warp's AI features (accessed via `Ctrl+~` or command palette):
+
 - Natural language to command translation
 - Command explanation
 - Error diagnosis
@@ -69,6 +77,7 @@ When suggesting commands, mention that users can use Warp AI to refine or explai
 ### Opening Terminal for User Review
 
 When commands require user interaction or review:
+
 ```bash
 warp-cli open --cwd /path/to/project
 # Then mention: "Opening Warp in the project directory. You can now run..."
@@ -77,6 +86,7 @@ warp-cli open --cwd /path/to/project
 ### Running Background Tasks
 
 For long-running commands:
+
 ```bash
 warp-cli run "npm run dev > /tmp/dev.log 2>&1 &"
 ```
@@ -84,6 +94,7 @@ warp-cli run "npm run dev > /tmp/dev.log 2>&1 &"
 ### Multi-Step Workflows
 
 For complex sequences, use script references:
+
 ```bash
 bash scripts/warp_workflow.sh
 ```
@@ -100,6 +111,7 @@ bash scripts/warp_workflow.sh
 ### scripts/
 
 Utility scripts for Warp integration:
+
 - `open_warp.sh` - Opens Warp with specified directory and commands
 - `create_workflow.sh` - Helper for creating Warp workflow files
 
