@@ -24,6 +24,17 @@ export function rewriteUpdateFlagArgv(argv: string[]): string[] {
   return next;
 }
 
+export function rewriteListSkillsFlagArgv(argv: string[]): string[] {
+  const index = argv.indexOf("--list-skills");
+  if (index === -1) {
+    return argv;
+  }
+
+  const next = [...argv];
+  next.splice(index, 1, "skills", "list");
+  return next;
+}
+
 export function shouldRegisterPrimarySubcommand(argv: string[]): boolean {
   return !hasHelpOrVersion(argv);
 }
@@ -101,7 +112,7 @@ export async function runCli(argv: string[] = process.argv) {
     process.exit(1);
   });
 
-  const parseArgv = rewriteUpdateFlagArgv(normalizedArgv);
+  const parseArgv = rewriteListSkillsFlagArgv(rewriteUpdateFlagArgv(normalizedArgv));
   // Register the primary command (builtin or subcli) so help and command parsing
   // are correct even with lazy command registration.
   const primary = getPrimaryCommand(parseArgv);

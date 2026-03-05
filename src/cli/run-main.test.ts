@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  rewriteListSkillsFlagArgv,
   rewriteUpdateFlagArgv,
   shouldEnsureCliPath,
   shouldRegisterPrimarySubcommand,
@@ -35,6 +36,38 @@ describe("rewriteUpdateFlagArgv", () => {
       "node",
       "entry.js",
       "update",
+      "--json",
+    ]);
+  });
+});
+
+describe("rewriteListSkillsFlagArgv", () => {
+  it("leaves argv unchanged when --list-skills is absent", () => {
+    const argv = ["node", "entry.js", "status"];
+    expect(rewriteListSkillsFlagArgv(argv)).toBe(argv);
+  });
+
+  it("rewrites --list-skills into skills list", () => {
+    expect(rewriteListSkillsFlagArgv(["node", "entry.js", "--list-skills"])).toEqual([
+      "node",
+      "entry.js",
+      "skills",
+      "list",
+    ]);
+  });
+
+  it("preserves global flags that appear before --list-skills", () => {
+    expect(
+      rewriteListSkillsFlagArgv(["node", "entry.js", "--profile", "p", "--list-skills"]),
+    ).toEqual(["node", "entry.js", "--profile", "p", "skills", "list"]);
+  });
+
+  it("keeps options after the rewritten command tokens", () => {
+    expect(rewriteListSkillsFlagArgv(["node", "entry.js", "--list-skills", "--json"])).toEqual([
+      "node",
+      "entry.js",
+      "skills",
+      "list",
       "--json",
     ]);
   });
