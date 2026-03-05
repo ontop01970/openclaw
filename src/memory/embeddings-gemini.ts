@@ -1,14 +1,17 @@
 import { requireApiKey, resolveApiKeyForProvider } from "../agents/model-auth.js";
 import { isTruthyEnvValue } from "../infra/env.js";
+import type { SsrFPolicy } from "../infra/net/ssrf.js";
 import { createGeminiRetryRunner } from "../infra/retry-policy.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import type { EmbeddingProvider, EmbeddingProviderOptions } from "./embeddings.js";
+import { buildRemoteBaseUrlPolicy } from "./remote-http.js";
 
 export type GeminiEmbeddingClient = {
   baseUrl: string;
   headers: Record<string, string>;
   model: string;
   modelPath: string;
+  ssrfPolicy?: SsrFPolicy;
 };
 
 const DEFAULT_GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta";
@@ -168,5 +171,5 @@ export async function resolveGeminiEmbeddingClient(
     embedEndpoint: `${baseUrl}/${modelPath}:embedContent`,
     batchEndpoint: `${baseUrl}/${modelPath}:batchEmbedContents`,
   });
-  return { baseUrl, headers, model, modelPath };
+  return { baseUrl, headers, model, modelPath, ssrfPolicy: buildRemoteBaseUrlPolicy(baseUrl) };
 }
