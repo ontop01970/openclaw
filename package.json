@@ -444,6 +444,11 @@
       "node-llama-cpp",
       "protobufjs",
       "sharp"
+    ],
+    "ignoredBuiltDependencies": [
+      "@discordjs/opus",
+      "@tloncorp/tlon-skill",
+      "core-js"
     ]
   }
 }
